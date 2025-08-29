@@ -47,9 +47,4 @@ jobs:
       - name: Wait 3s (allow S3 eventual consistency)
         run: sleep 3
 
-      - name: Invalidate CloudFront (optional)
-        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
-            --paths "/*"
+      

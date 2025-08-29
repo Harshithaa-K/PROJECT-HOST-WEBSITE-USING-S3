@@ -27,7 +27,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # Install AWS CLI (sometimes not pre-installed)
+      # Install AWS CLI
       - name: Install AWS CLI
         run: |
           sudo apt-get update

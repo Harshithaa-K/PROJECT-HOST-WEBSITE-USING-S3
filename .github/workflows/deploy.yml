@@ -27,6 +27,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      
+      # Debug step to confirm secrets & credentials are working
+      - name: Debug AWS identity
+        run: aws sts get-caller-identity
+
       - name: Sync to S3
         run: |
           # directory to deploy (change if your build output is elsewhere)
@@ -45,5 +50,7 @@ jobs:
 
       - name: Wait 3s (allow S3 eventual consistency)
         run: sleep 3
+
+
 
       

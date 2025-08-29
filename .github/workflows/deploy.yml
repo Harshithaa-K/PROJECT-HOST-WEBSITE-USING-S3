@@ -1,0 +1,55 @@
+name: Deploy static site to S3
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # If you have a build step (e.g., npm run build) add it here.
+      # - name: Build site
+      #   run: |
+      #     npm ci
+      #     npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1         # change to your region
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME || '' }} # optional
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Sync to S3
+        run: |
+          # directory to deploy (change if your build output is elsewhere)
+          SOURCE_DIR=public
+          BUCKET=harshitha-static-website      
+          # Sync files - sets cache-control for static assets & public read
+          aws s3 sync "$SOURCE_DIR" "s3://$BUCKET" \
+            --delete \
+            --acl public-read \
+            --cache-control "max-age=31536000,public" \
+            --exclude "index.html" \
+          && aws s3 cp "$SOURCE_DIR/index.html" "s3://$BUCKET/index.html" \
+            --acl public-read \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Wait 3s (allow S3 eventual consistency)
+        run: sleep 3
+
+      - name: Invalidate CloudFront (optional)
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"

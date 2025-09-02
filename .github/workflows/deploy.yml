@@ -23,7 +23,7 @@ jobs:
 
       - name: Sync to S3
         run: |
-          SOURCE_DIR=public
+          SOURCE_DIR=.
           BUCKET=harshitha-static-website      
 
           # Sync files - long cache for assets, no-cache for index.html
@@ -31,7 +31,9 @@ jobs:
             --delete \
             --acl public-read \
             --cache-control "max-age=31536000,public" \
-            --exclude "index.html"
+            --exclude "index.html" \
+            --exclude ".git/*" \
+            --exclude ".github/*"
 
           aws s3 cp "$SOURCE_DIR/index.html" "s3://$BUCKET/index.html" \
             --acl public-read \

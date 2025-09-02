@@ -14,12 +14,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Optional build step
-      # - name: Build site
-      #   run: |
-      #     npm ci
-      #     npm run build
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

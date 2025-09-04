@@ -24,7 +24,7 @@ jobs:
       - name: Sync to S3
         run: |
           SOURCE_DIR=.
-          BUCKET=harshitha-static-website      
+          BUCKET=harshithamd.space      
 
           # Sync files - long cache for assets, no-cache for index.html
           aws s3 sync "$SOURCE_DIR" "s3://$BUCKET" \
